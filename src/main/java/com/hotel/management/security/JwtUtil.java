@@ -1,5 +1,6 @@
 package com.hotel.management.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,7 +10,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "dKcR4DcZgOXSXDYT3S5wECvkFmQ8h/N4bk3LSjq1PqU=hkHGKUGUgukfgkugfgfGKUGkugkGKfkgfkGKUGKugkuGUKgkGKU";
+    @Value("${jwt.secret-key}")
+    private String SECRET_KEY;
 
     public String getUsernameFromToken(String token){
         return getAllClaimsFromToken(token).getSubject();
