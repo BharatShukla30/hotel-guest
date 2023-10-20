@@ -16,7 +16,7 @@ public class Guest {
     private String fathersName;
     private String phoneNumber;
     private String email;
-    private Float guestRating;
+    private float guestRating;
     @OneToMany(mappedBy = "guest")
     private List<Review> reviews;
 

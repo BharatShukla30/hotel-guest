@@ -1,5 +1,7 @@
 package com.hotel.management.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.Date;
 
 @Component
@@ -39,11 +42,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String token = null;
         Boolean expired = true;
-        if(requestHeader.startsWith("Bearer")){
+        if(requestHeader != null && requestHeader.startsWith("Bearer")){
             token = requestHeader.substring(7);
             try{
                 username = jwtUtil.getUsernameFromToken(token);
                 expired = jwtUtil.isTokenExpired(token);
+            }
+            catch (IllegalArgumentException e){
+                logger.info("Illegal Argument while fetching the username");
+            }
+            catch (ExpiredJwtException e){
+                logger.info("Given JWT token is expired");
+            }
+            catch (MalformedJwtException e){
+                logger.info("Some change has done in token !! Invalid token");
             }
             catch (Exception e){
                 logger.info(e.getMessage());

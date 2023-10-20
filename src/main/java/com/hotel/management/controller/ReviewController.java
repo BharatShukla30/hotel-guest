@@ -1,27 +1,38 @@
 package com.hotel.management.controller;
 
+import com.hotel.management.entity.Guest;
+import com.hotel.management.entity.Review;
+import com.hotel.management.entity.User;
+import com.hotel.management.service.GuestService;
+import com.hotel.management.service.ReviewService;
+import com.hotel.management.util.ResponseBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
+@RequestMapping("/review")
 public class ReviewController {
 
+    private final ReviewService reviewService;
 
-    // Both are just for Testing Purpose
-    @GetMapping("/login")
-    public String test(){
-        return "Access Gained..";
+    @Autowired
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    @GetMapping("/private")
-    public String privateUrl(){
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        return "Private Resource";
+    @PostMapping("/add/{guestId}")
+    public ResponseEntity<Map<Object, Object>> addReview(@PathVariable Long guestId, @RequestBody Review review){
+        Review newReview = reviewService.addReview(review, guestId);
+        return ResponseBuilder.buildResponse(HttpStatus.OK, newReview, "Review Added successfully");
     }
+
 }

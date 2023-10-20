@@ -9,19 +9,12 @@ import java.util.Optional;
 
 
 public interface GuestService {
-    //private final GuestRepository guestRepository;
-//    private final GuestDao guestDao;
 
-//    @Autowired
-//    public GuestService(GuestDao guestDao) {
-//        //this.guestRepository = guestRepository;
-//        this.guestDao = guestDao;
-//    }
+    public Guest addGuest(Guest guest);
 
-    public ResponseEntity<String> addGuest(Guest guest);
-    public Optional<Guest> getGuestByAdhar(String adharCardNumber);
+    public Optional<Guest> getByAadhaarNumber(String aadhaarNumber);
 
-//    public int createGuestTable();
+
 
 
 }

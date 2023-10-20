@@ -1,5 +1,6 @@
 package com.hotel.management.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class Review {
     private String reviewMessage;
     private Date addedAt;
     @ManyToOne
+    @JsonIgnore
     private Guest guest;
 
 }
