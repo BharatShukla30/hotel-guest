@@ -1,17 +1,23 @@
 package com.hotel.management.controller;
 
-import com.hotel.management.model.Guest;
+import com.hotel.management.entity.Guest;
+import com.hotel.management.entity.Review;
 import com.hotel.management.service.GuestService;
+import com.hotel.management.service.ReviewService;
+import com.hotel.management.util.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/guests")
+@RequestMapping("/guest")
 public class GuestController {
     private final GuestService guestService;
+
 
     @Autowired
     public GuestController(GuestService guestService) {
@@ -19,26 +25,22 @@ public class GuestController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addGuest(@RequestBody Guest guest) {
-        return guestService.addGuest(guest);
+    public ResponseEntity<Map<Object, Object>> createGuest(@RequestBody Guest guest){
+        Guest newGuest = guestService.addGuest(guest);
+        return ResponseBuilder.buildResponse(HttpStatus.OK, guest, "Review Added Successfully");
     }
 
-    @GetMapping("/get-by-adhar/{adharCardNumber}")
-    public ResponseEntity<?> getGuestByAdhar(@PathVariable String adharCardNumber) {
-        Optional<Guest> guestOptional = guestService.getGuestByAdhar(adharCardNumber);
-        if (guestOptional.isPresent()) {
-            Guest guest = guestOptional.get();
-            return ResponseEntity.ok(guest.getGuestRating());
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{aadhaarNumber}")
+    public ResponseEntity<Map<Object, Object>> getGuestByAadhaarNumber(@PathVariable String aadhaarNumber){
+        Optional<Guest> guest = guestService.getByAadhaarNumber(aadhaarNumber);
+        if(guest.isPresent()){
+            return ResponseBuilder.buildResponse(HttpStatus.OK, guest, "Guest Data Fetched");
         }
+
+        return ResponseBuilder.buildResponse(HttpStatus.NOT_FOUND, null, "Guest does not exist");
     }
 
-//    @GetMapping("/create-table")
-//    public ResponseEntity<Integer> createTableDb(){
-//        Integer intObj = (guestService.createGuestTable());
-//        return ResponseEntity.ok(intObj);
-//    }
+
 }
 
 
