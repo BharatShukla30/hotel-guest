@@ -5,6 +5,7 @@ import com.hotel.management.entity.Review;
 import com.hotel.management.service.GuestService;
 import com.hotel.management.service.ReviewService;
 import com.hotel.management.util.ResponseBuilder;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,14 @@ public class GuestController {
 
     @PostMapping("/add")
     public ResponseEntity<Map<Object, Object>> createGuest(@RequestBody Guest guest){
-        Guest newGuest = guestService.addGuest(guest);
-        return ResponseBuilder.buildResponse(HttpStatus.OK, guest, "Review Added Successfully");
+        try{
+            Guest newGuest = guestService.addGuest(guest);
+            return ResponseBuilder.buildResponse(HttpStatus.OK, newGuest, "Guest Added Successfully");
+        }
+        catch (RuntimeException e){
+            return ResponseBuilder.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage());
+        }
+
     }
 
     @GetMapping("/{aadhaarNumber}")
@@ -36,10 +43,8 @@ public class GuestController {
         if(guest.isPresent()){
             return ResponseBuilder.buildResponse(HttpStatus.OK, guest, "Guest Data Fetched");
         }
-
         return ResponseBuilder.buildResponse(HttpStatus.NOT_FOUND, null, "Guest does not exist");
     }
-
 
 }
 
